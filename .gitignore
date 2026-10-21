@@ -1,0 +1,6 @@
+*.p12
+*.pfx
+*.jks
+*.keystore
+storepass
+.env
