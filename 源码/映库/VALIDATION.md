@@ -16,6 +16,10 @@ APK SHA-256：`fb71725d56dc263ed0ea14558a0011b8473bf36558f5d698e3f0942b44d694a6`
 
 本轮结果记录在源码包的 `core-test-results.txt`、`test-instrumentation.txt`、`test-logcat.txt`、`test-cold-restore.txt`。测试使用的文档格式 fixture 为独立测试提供器，不能单凭此断言所有 OEM 存储提供器行为一致。
 
+## 实际公共目录授权
+
+通过系统 ACTION_OPEN_DOCUMENT_TREE 选择 `Movies/CineShelfDemo`；持久目录授权调用成功，Android external-storage 提供器中的真实 MP4 已索引为可访问。它与独立测试提供器中的同一文件进行了完整 SHA-256 核验并合并显示（3 个条目、隐藏 1 份副本）。真实目录的文件未做删除测试。过程记录见 `test-real-folder.txt`。
+
 ## 验证范围与限制
 
 云端没有 KVM，软件模拟器启动和安装较慢，曾出现系统界面 ANR。调试时曾连接 system_server 的 JDWP 并恢复 VM 运行以避免启动时看门狗重启；正式流程测试运行时已断开。曾隐藏模拟器系统错误弹窗，测试结果以日志和断言为准，不能把无弹窗当作无 ANR。正式 APK 不包含这些测试环境设置。

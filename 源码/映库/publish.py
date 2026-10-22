@@ -10,7 +10,7 @@ with zipfile.ZipFile(D/'CineShelf-source.zip','w',zipfile.ZIP_DEFLATED) as z:
  for folder in ['src','res','tests','test-app']:
   for f in (R/folder).rglob('*'):
    if f.is_file() and '__pycache__' not in f.parts:z.write(f,Path('CineShelf')/f.relative_to(R))
- for name in ['AndroidManifest.xml','build.py','build_tests.py','publish.py','README.md','VALIDATION.md','AGENTS.md','core-test-results.txt','signature.txt','permissions.txt','test-instrumentation.txt','test-logcat.txt','test-cold-restore.txt']:
+ for name in ['AndroidManifest.xml','build.py','build_tests.py','publish.py','README.md','VALIDATION.md','AGENTS.md','core-test-results.txt','signature.txt','permissions.txt','test-instrumentation.txt','test-logcat.txt','test-cold-restore.txt','test-real-folder.txt']:
   if (R/name).exists():z.write(R/name,Path('CineShelf')/name)
 source=P/'源码/映库';source.mkdir(parents=True,exist_ok=True)
 for folder in ['src','res','tests','test-app']:
