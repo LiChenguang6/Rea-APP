@@ -1,22 +1,16 @@
 # Persistent project requirements
 
-After each new Android build or material source change, create and upload a new
-encrypted 7z recovery snapshot of the workspace under 环境备份. Run
-维护/backup_environment.py from the restored workspace, or the equivalent script
-in /workspace/shared-download-integration/maintenance/backup_environment.py.
-Keep older snapshots. Include source, inputs, outputs, signing material, tools,
-SDK and emulator data. Exclude platform credential mounts and the upload staging
-checkout to prevent recursive inclusion of previous backups.
-
-Encrypt filenames as well as contents. The password belongs outside both the
-archive and GitHub in a private directory, and must be handed to the owner through
-this private conversation. Never commit plaintext keys, passwords or unrelated
-credentials. The repository is public. Mark a snapshot complete only after every
-volume is pushed; do not claim partially uploaded snapshots are recoverable.
-
-Preserve old installed app identities and existing video files. Imported old
-videos have unknown original source fingerprints; do not promise that their first
-new submission can be blocked by URL. Do not add account or video permission bypass.
-APK candidates may be supplied for owner testing, but upload success and static
-audits do not establish functional readiness. The owner waived download-back
-verification for the current distribution; do not claim that it occurred.
+The owner cancelled full environment backups on 2026-10-23. Do not create or
+upload workspace, SDK, emulator, source or input archives for recovery. Back up
+only signing keys and their required keystore password/alias, using encrypted
+7z under 密钥备份. Keep the archive password private, outside GitHub and archive.
+Use 维护/backup_signing_key.py, or the equivalent local maintenance script.
+Preserve the current signing key so later builds can update installed variants.
+APK distribution and ordinary source/version history may continue; old large
+环境备份 files must not be reintroduced, including in reachable Git history.
+Never commit plaintext private keys/passwords/unrelated credentials.
+Preserve existing installed app identities and user video files. Exact duplicate
+cleanup requires fresh full SHA-256, keeper protection and explicit confirmation.
+Visual matches are hints only. Android URI sharing cannot transparently replace
+arbitrary legacy paths. No account or video permission bypass.
+Candidates may be uploaded for owner testing. State actual verification limits.

@@ -1,10 +1,16 @@
-Preserve independent package identity org.rea.cineshelf and existing user video files.
-Never publish signing materials. Every material change/build requires an encrypted
-full /workspace recovery snapshot, uploaded to LiChenguang6/Rea-APP under 环境备份;
-use /workspace/shared-download-integration/maintenance/backup_environment.py.
-Keep backup password outside archives and public Git, privately provide it to owner.
-Exact-byte duplicates only can be destructively cleaned after fresh full SHA-256,
-keeper protection, explicit confirmation. Visual matches are hints only.
-Do not promise arbitrary old-path hard links on Android SAF/FUSE or preserve
-legacy download-path behavior after actual deletion. No permission/account bypass.
-Candidate builds can be uploaded for owner tests. State actual verification limits.
+# Persistent project requirements
+
+The owner cancelled full environment backups on 2026-10-23. Do not create or
+upload workspace, SDK, emulator, source or input archives for recovery. Back up
+only signing keys and their required keystore password/alias, using encrypted
+7z under 密钥备份. Keep the archive password private, outside GitHub and archive.
+Use 维护/backup_signing_key.py, or the equivalent local maintenance script.
+Preserve the current signing key so later builds can update installed variants.
+APK distribution and ordinary source/version history may continue; old large
+环境备份 files must not be reintroduced, including in reachable Git history.
+Never commit plaintext private keys/passwords/unrelated credentials.
+Preserve existing installed app identities and user video files. Exact duplicate
+cleanup requires fresh full SHA-256, keeper protection and explicit confirmation.
+Visual matches are hints only. Android URI sharing cannot transparently replace
+arbitrary legacy paths. No account or video permission bypass.
+Candidates may be uploaded for owner testing. State actual verification limits.

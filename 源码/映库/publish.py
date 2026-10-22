@@ -26,6 +26,7 @@ sums.write_text('\n'.join(lines)+'\n')
 readme=P/'README.md';previous=readme.read_text();title='## 历史共享下载候选版'
 if title in previous:previous=previous[previous.index(title)+len(title):].lstrip()
 else:previous=previous.replace('# Rea-APP\n','',1).lstrip()
+previous=previous.split('## 环境恢复备份')[0].rstrip()+'\n'
 readme.write_text('''# Rea-APP
 
 ## 映库 · 独立本地播放器（当前开发方向）
