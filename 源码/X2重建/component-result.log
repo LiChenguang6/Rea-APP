@@ -1,0 +1,2 @@
+INSTRUMENTATION_RESULT: result=PASS: source binding, prefetch isolation, DRM exclusion, isolated original Flutter/BetterPlayer component setup/play/header/pause/dispose; full app startup not covered
+INSTRUMENTATION_CODE: -1
