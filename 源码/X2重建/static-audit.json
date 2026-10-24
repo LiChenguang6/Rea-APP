@@ -1,0 +1,10 @@
+{
+  "input_sha256": "c0ebbc308918c3322f34842dcd197b80fead0a421ab139d87bd8d52b3dfea089",
+  "apk_sha256": "d440d172e023e82bb74102857d599896dfcfffa126779461d927422c755f1b73",
+  "original_libs_and_assets_identical": true,
+  "legacy_offset_patch": false,
+  "original_login_and_entitlement_native_code": "unchanged",
+  "package": "com.example.yinqishe_shared",
+  "versionCode": 31,
+  "read_only_java_capture": "BetterPlayer data source plus play/pause/dispose"
+}

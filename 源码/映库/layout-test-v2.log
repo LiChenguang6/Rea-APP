@@ -1,0 +1,8 @@
+/workspace/local-video-player/output/CineShelf-preview.apk: 1 file pushed, 0 skipped. 107.0 MB/s (53718 bytes in 0.000s)
+Performing Push Install
+Success
+/workspace/local-video-player/build/test/tests.apk: 1 file pushed, 0 skipped. 204.9 MB/s (3330670 bytes in 0.016s)
+Performing Push Install
+Success
+INSTRUMENTATION_RESULT: result=PASS: default library, compact navigation, home-only brand/search, independent filtering, settings customization and cleanup routing
+INSTRUMENTATION_CODE: -1

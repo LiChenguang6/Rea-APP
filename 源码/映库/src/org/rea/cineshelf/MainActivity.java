@@ -14,7 +14,10 @@ import java.util.*;
 
 public class MainActivity extends Activity implements Catalog.Listener {
   Catalog catalog;
-  LinearLayout shell, body, bottom;
+  LinearLayout shell, body, bottom, homeHeader, searchBar, pageHeader;
+  TextView pageTitle;
+  ScrollView scroll;
+  boolean cleanupPage;
   TextView scanStatus;
   ProgressBar scanning;
   EditText search;
@@ -51,12 +54,13 @@ public class MainActivity extends Activity implements Catalog.Listener {
     super.onCreate(saved);
     catalog = Catalog.get(this);
     if (saved != null) {
-      tab = saved.getInt("tab");
+      tab = saved.getInt("tab", 1);
+      cleanupPage = saved.getBoolean("cleanupPage", false);
       query = saved.getString("query", "");
       filter = saved.getString("filter", "全部");
       shownCount = saved.getInt("shown", 48);
     } else {
-      tab = catalog.prefs.getInt("ui.tab", 0);
+      tab = 1;
       query = catalog.prefs.getString("ui.query", "");
       filter = catalog.prefs.getString("ui.filter", "全部");
       shownCount = catalog.prefs.getInt("ui.shown", 48);
@@ -67,6 +71,7 @@ public class MainActivity extends Activity implements Catalog.Listener {
   @Override
   protected void onSaveInstanceState(Bundle b) {
     b.putInt("tab", tab);
+    b.putBoolean("cleanupPage", cleanupPage);
     b.putString("query", query);
     b.putString("filter", filter);
     b.putInt("shown", shownCount);
@@ -108,6 +113,7 @@ public class MainActivity extends Activity implements Catalog.Listener {
   public void changed() {
     if (active) {
       scanStatus.setText(catalog.status);
+      scanStatus.setVisibility(catalog.busy || catalog.warnings > 0 ? View.VISIBLE : View.GONE);
       scanning.setVisibility(catalog.busy ? View.VISIBLE : View.GONE);
       if (!catalog.busy) render();
     }
@@ -119,27 +125,17 @@ public class MainActivity extends Activity implements Catalog.Listener {
     setContentView(shell);
     Ui.insets(this, shell);
     LinearLayout header = Ui.row(this);
-    Ui.pad(header, 20, 12, 20, 8);
+    homeHeader = header;
+    Ui.pad(header, 12, 2, 12, 2);
     LinearLayout branding = Ui.column(this);
-    TextView brand = Ui.text(this, "映库", 28, Ui.INK);
+    TextView brand = Ui.text(this, "映库", 22, Ui.INK);
     brand.setTypeface(null, 1);
     branding.addView(brand);
-    branding.addView(Ui.text(this, "CINESHELF   /   你的本地影院", 10, Ui.MUTED));
     header.addView(branding, new LinearLayout.LayoutParams(0, -2, 1));
-    header.addView(Ui.iconButton(this, "folder", this::chooseFolder));
-    View spacer = new View(this);
-    header.addView(spacer, new LinearLayout.LayoutParams(Ui.dp(this, 8), 1));
-    header.addView(
-        Ui.iconButton(
-            this,
-            "refresh",
-            () -> {
-              if (catalog.busy) {
-                toast("正在处理：" + catalog.status);
-              } else catalog.scan();
-            }));
+    addToolbarActions(header);
     shell.addView(header);
     LinearLayout searchRow = Ui.row(this);
+    searchBar = searchRow;
     Ui.pad(searchRow, 14, 0, 12, 0);
     Ui.round(searchRow, Ui.CARD, 18);
     Ui.Icon glass = new Ui.Icon(this, "search", Ui.MUTED);
@@ -152,9 +148,9 @@ public class MainActivity extends Activity implements Catalog.Listener {
     search.setHint("搜索你的本地视频");
     search.setBackgroundColor(Color.TRANSPARENT);
     search.setText(query);
-    searchRow.addView(search, new LinearLayout.LayoutParams(0, Ui.dp(this, 48), 1));
+    searchRow.addView(search, new LinearLayout.LayoutParams(0, Ui.dp(this, 42), 1));
     LinearLayout.LayoutParams slp = new LinearLayout.LayoutParams(-1, -2);
-    slp.setMargins(Ui.dp(this, 20), Ui.dp(this, 8), Ui.dp(this, 20), Ui.dp(this, 10));
+    slp.setMargins(Ui.dp(this, 8), Ui.dp(this, 4), Ui.dp(this, 8), Ui.dp(this, 6));
     shell.addView(searchRow, slp);
     search.addTextChangedListener(
         new TextWatcher() {
@@ -168,6 +164,13 @@ public class MainActivity extends Activity implements Catalog.Listener {
 
           public void afterTextChanged(Editable e) {}
         });
+    pageHeader = Ui.row(this);
+    Ui.pad(pageHeader, 12, 0, 8, 0);
+    pageTitle = Ui.text(this, "影库", 20, Ui.INK);
+    pageTitle.setTypeface(null, 1);
+    pageHeader.addView(pageTitle, new LinearLayout.LayoutParams(0, Ui.dp(this, 44), 1));
+    addToolbarActions(pageHeader);
+    shell.addView(pageHeader);
     scanStatus = Ui.text(this, catalog.status, 11, Ui.MUTED);
     Ui.pad(scanStatus, 22, 2, 22, 6);
     scanStatus.setMaxLines(1);
@@ -178,15 +181,15 @@ public class MainActivity extends Activity implements Catalog.Listener {
     scanning.setProgressTintList(android.content.res.ColorStateList.valueOf(Ui.PINK));
     shell.addView(scanning, new LinearLayout.LayoutParams(-1, Ui.dp(this, 2)));
     scanning.setVisibility(catalog.busy ? View.VISIBLE : View.GONE);
-    ScrollView scroll = new ScrollView(this);
+    scroll = new ScrollView(this);
     scroll.setFillViewport(true);
     scroll.setClipToPadding(false);
     body = Ui.column(this);
-    Ui.pad(body, 20, 12, 20, 24);
+    Ui.pad(body, 8, 4, 8, 8);
     scroll.addView(body);
     shell.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
     bottom = Ui.row(this);
-    Ui.pad(bottom, 8, 8, 8, 10);
+    Ui.pad(bottom, 4, 2, 4, 2);
     bottom.setBackgroundColor(0xff151927);
     shell.addView(bottom);
     render();
@@ -194,38 +197,52 @@ public class MainActivity extends Activity implements Catalog.Listener {
 
   void render() {
     if (body == null) return;
+    homeHeader.setVisibility(tab == 0 ? View.VISIBLE : View.GONE);
+    searchBar.setVisibility(tab == 0 ? View.VISIBLE : View.GONE);
+    pageHeader.setVisibility(tab == 0 ? View.GONE : View.VISIBLE);
+    pageTitle.setText(
+        cleanupPage
+            ? "重复视频清理"
+            : tab == 1 ? "影库  ·  " + catalog.groups.size() : tab == 2 ? "最近" : "设置");
+    scanStatus.setVisibility(catalog.busy || catalog.warnings > 0 ? View.VISIBLE : View.GONE);
     body.removeAllViews();
     bottom.removeAllViews();
-    String[] titles = {"影库", "最近", "清理", "设置"};
-    String[] icons = {"library", "history", "clean", "settings"};
+    String[] titles = {"主页", "影库", "最近", "设置"};
+    String[] icons = {"home", "library", "history", "settings"};
     for (int i = 0; i < 4; i++) {
       final int index = i;
       LinearLayout cell = Ui.column(this);
       cell.setGravity(Gravity.CENTER);
       Ui.Icon icon = new Ui.Icon(this, icons[i], tab == i ? Ui.PINK : Ui.MUTED);
-      cell.addView(icon, new LinearLayout.LayoutParams(Ui.dp(this, 23), Ui.dp(this, 23)));
+      cell.addView(icon, new LinearLayout.LayoutParams(Ui.dp(this, 21), Ui.dp(this, 21)));
       TextView label = Ui.text(this, titles[i], 10, tab == i ? Ui.PINK : Ui.MUTED);
       label.setGravity(Gravity.CENTER);
-      Ui.pad(label, 0, 4, 0, 0);
+      Ui.pad(label, 0, 2, 0, 0);
       cell.addView(label);
       bottom.addView(cell, new LinearLayout.LayoutParams(0, Ui.dp(this, 48), 1));
       cell.setOnClickListener(
           v -> {
             tab = index;
+            cleanupPage = false;
+            scroll.scrollTo(0, 0);
             filter = "全部";
             shownCount = 48;
             render();
           });
+    }
+    if (cleanupPage) {
+      cleanup();
+      return;
     }
     switch (tab) {
       case 0:
         library(false);
         break;
       case 1:
-        library(true);
+        library(false);
         break;
       case 2:
-        cleanup();
+        library(true);
         break;
       default:
         settings();
@@ -250,16 +267,18 @@ public class MainActivity extends Activity implements Catalog.Listener {
       copies += g.copies.size() - 1;
       waste += g.waste();
     }
-    heading(recent ? "接着看" : "每一部，都值得收藏", recent ? "播放进度留在这台设备，随时继续" : "本地保存 · 无需登录 · 没有广告");
-    if (!recent) {
+
+    if (tab == 0 && catalog.prefs.getBoolean("layout.stats", false)) {
       LinearLayout stats = Ui.row(this);
       stat(stats, "视频", String.valueOf(list.size()), Ui.PURPLE);
       stat(stats, "隐藏副本", String.valueOf(copies), Ui.PINK);
       stat(stats, "可清理", Ui.bytes(waste), 0xff5bd5bd);
       body.addView(stats);
-      gap(18);
+      gap(8);
+    }
+    if (!recent) {
       LinearLayout chips = Ui.row(this);
-      for (String name : new String[] {"全部", "最近添加", "多副本"}) {
+      for (String name : new String[] {"全部", "近7天", "多副本"}) {
         TextView chip = Ui.text(this, name, 12, filter.equals(name) ? Ui.INK : Ui.MUTED);
         Ui.pad(chip, 14, 8, 14, 8);
         Ui.round(chip, filter.equals(name) ? 0xff41304d : Ui.CARD, 14);
@@ -273,12 +292,16 @@ public class MainActivity extends Activity implements Catalog.Listener {
             });
       }
       body.addView(chips);
-      gap(18);
+      gap(8);
     }
     List<Catalog.Group> filtered = new ArrayList<>();
     for (Catalog.Group g : list) {
       Catalog.Video v = g.first();
-      if (!v.name.toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT))) continue;
+      if (tab == 0 && !v.name.toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT)))
+        continue;
+      if (!recent
+          && filter.equals("近7天")
+          && v.modified < System.currentTimeMillis() - 7L * 86400000) continue;
       if (recent && catalog.lastPlayed(v) == 0) continue;
       if (!recent && filter.equals("多副本") && g.copies.size() < 2) continue;
       filtered.add(g);
@@ -294,7 +317,7 @@ public class MainActivity extends Activity implements Catalog.Listener {
           !recent);
       return;
     }
-    int columns = getResources().getConfiguration().screenWidthDp >= 650 ? 3 : 2;
+    int columns = gridColumns();
     for (int at = 0; at < Math.min(shownCount, filtered.size()); at += columns) {
       LinearLayout row = Ui.row(this);
       row.setGravity(Gravity.TOP);
@@ -302,11 +325,11 @@ public class MainActivity extends Activity implements Catalog.Listener {
         int index = at + col;
         View card = index < filtered.size() ? videoCard(filtered.get(index)) : new View(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -2, 1);
-        if (col < columns - 1) lp.rightMargin = Ui.dp(this, 12);
+        if (col < columns - 1) lp.rightMargin = Ui.dp(this, 8);
         row.addView(card, lp);
       }
       body.addView(row);
-      gap(18);
+      gap(10);
     }
     if (filtered.size() > shownCount)
       body.addView(
@@ -341,7 +364,14 @@ public class MainActivity extends Activity implements Catalog.Listener {
     card.addView(
         cover,
         new LinearLayout.LayoutParams(
-            -1, Ui.dp(this, getResources().getConfiguration().screenWidthDp >= 650 ? 125 : 98)));
+            -1,
+            Ui.dp(
+                this,
+                Math.max(
+                    64,
+                    (getResources().getConfiguration().screenWidthDp - 16 - 8 * (gridColumns() - 1))
+                        * 9
+                        / (16 * gridColumns())))));
     cover.setOnClickListener(w -> play(v));
     if (v.duration > 0 && catalog.position(v) > 0) {
       ProgressBar progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
@@ -353,12 +383,12 @@ public class MainActivity extends Activity implements Catalog.Listener {
     LinearLayout titleRow = Ui.row(this);
     titleRow.setGravity(Gravity.TOP);
     TextView title = Ui.text(this, v.name, 13, Ui.INK);
-    title.setMaxLines(2);
+    title.setMaxLines(catalog.prefs.getInt("layout.titleLines", 2));
     title.setEllipsize(TextUtils.TruncateAt.END);
-    Ui.pad(title, 0, 9, 0, 2);
+    Ui.pad(title, 0, 5, 0, 1);
     titleRow.addView(title, new LinearLayout.LayoutParams(0, -2, 1));
     Ui.Icon more = new Ui.Icon(this, "more", Ui.MUTED);
-    titleRow.addView(more, new LinearLayout.LayoutParams(Ui.dp(this, 26), Ui.dp(this, 38)));
+    titleRow.addView(more, new LinearLayout.LayoutParams(Ui.dp(this, 26), Ui.dp(this, 32)));
     more.setOnClickListener(w -> details(g));
     card.addView(titleRow);
     TextView sub =
@@ -555,7 +585,37 @@ public class MainActivity extends Activity implements Catalog.Listener {
   }
 
   void settings() {
-    heading("你的影库，你来管理", "目录授权、自动更新与兼容性说明");
+    LinearLayout customizeRow = panel();
+    customizeRow.addView(Ui.text(this, "界面与按钮自定义  ›", 16, Ui.INK));
+    TextView customSummary = Ui.text(this, "网格列数、标题行数、主页统计与工具按钮", 12, Ui.MUTED);
+    Ui.pad(customSummary, 0, 6, 0, 0);
+    customizeRow.addView(customSummary);
+    customizeRow.setOnClickListener(v -> customize());
+    body.addView(customizeRow);
+    gap(10);
+    long waste = 0;
+    int duplicateGroups = 0;
+    for (Catalog.Group g : catalog.groups)
+      if (g.copies.size() > 1) {
+        duplicateGroups++;
+        waste += g.waste();
+      }
+    LinearLayout cleanRow = panel();
+    cleanRow.addView(Ui.text(this, "重复视频清理  ›", 16, Ui.INK));
+    TextView cleanSummary =
+        Ui.text(
+            this, duplicateGroups + " 组完整重复 · 可释放 " + Ui.bytes(waste) + " · 相似画面提示", 12, Ui.PINK);
+    Ui.pad(cleanSummary, 0, 6, 0, 0);
+    cleanRow.addView(cleanSummary);
+    cleanRow.setOnClickListener(
+        v -> {
+          cleanupPage = true;
+          scroll.scrollTo(0, 0);
+          render();
+        });
+    body.addView(cleanRow);
+    gap(10);
+
     notice("完全本地", "映库不申请联网权限。视频、封面、哈希与播放进度只存放在你的设备。", 0xff5bd5bd);
     notice(
         "可读取哪些文件？",
@@ -610,9 +670,111 @@ public class MainActivity extends Activity implements Catalog.Listener {
     notice(
         "格式与版本",
         "使用 Android 系统解码器，实际支持取决于手机、封装和编码。加密私有视频与 DRM 内容不能直接播放。\n\n"
-            + "映库 0.1.0 · 独立测试版\n"
+            + "映库 0.2.0 · 独立测试版\n"
             + "与旧 App 并列安装，不迁移或修改旧 App 私有数据。",
         Ui.MUTED);
+  }
+
+  int gridColumns() {
+    return Math.max(
+        1,
+        Math.min(
+            4,
+            catalog.prefs.getInt(
+                "layout.columns", getResources().getConfiguration().screenWidthDp >= 650 ? 3 : 2)));
+  }
+
+  void addToolbarActions(LinearLayout row) {
+    if (catalog.prefs.getBoolean("layout.folderButton", true))
+      row.addView(Ui.iconButton(this, "folder", this::chooseFolder));
+    if (catalog.prefs.getBoolean("layout.refreshButton", true)) {
+      View spacer = new View(this);
+      row.addView(spacer, new LinearLayout.LayoutParams(Ui.dp(this, 4), 1));
+      row.addView(
+          Ui.iconButton(
+              this,
+              "refresh",
+              () -> {
+                if (catalog.busy) toast(catalog.status);
+                else catalog.scan();
+              }));
+    }
+  }
+
+  void customize() {
+    String[] options = {
+      "每行视频：" + gridColumns() + " 个",
+      "视频标题：" + catalog.prefs.getInt("layout.titleLines", 2) + " 行",
+      "主页统计卡片：" + (catalog.prefs.getBoolean("layout.stats", false) ? "显示" : "隐藏"),
+      "添加目录按钮：" + (catalog.prefs.getBoolean("layout.folderButton", true) ? "显示" : "隐藏"),
+      "刷新按钮：" + (catalog.prefs.getBoolean("layout.refreshButton", true) ? "显示" : "隐藏"),
+      "恢复默认界面"
+    };
+    new AlertDialog.Builder(this)
+        .setTitle("界面与按钮自定义")
+        .setItems(
+            options,
+            (dialog, index) -> {
+              if (index == 0) {
+                new AlertDialog.Builder(this)
+                    .setTitle("每行视频数量")
+                    .setSingleChoiceItems(
+                        new String[] {"1 个", "2 个", "3 个", "4 个"},
+                        gridColumns() - 1,
+                        (d, n) -> {
+                          catalog.prefs.edit().putInt("layout.columns", n + 1).apply();
+                          d.dismiss();
+                          build();
+                        })
+                    .setNegativeButton("取消", null)
+                    .show();
+              } else if (index == 1) {
+                new AlertDialog.Builder(this)
+                    .setTitle("视频标题行数")
+                    .setSingleChoiceItems(
+                        new String[] {"1 行", "2 行"},
+                        catalog.prefs.getInt("layout.titleLines", 2) - 1,
+                        (d, n) -> {
+                          catalog.prefs.edit().putInt("layout.titleLines", n + 1).apply();
+                          d.dismiss();
+                          build();
+                        })
+                    .setNegativeButton("取消", null)
+                    .show();
+              } else if (index >= 2 && index <= 4) {
+                String key =
+                    index == 2
+                        ? "layout.stats"
+                        : index == 3 ? "layout.folderButton" : "layout.refreshButton";
+                boolean def = index != 2;
+                catalog.prefs.edit().putBoolean(key, !catalog.prefs.getBoolean(key, def)).apply();
+                build();
+              } else {
+                catalog
+                    .prefs
+                    .edit()
+                    .remove("layout.columns")
+                    .remove("layout.titleLines")
+                    .remove("layout.stats")
+                    .remove("layout.folderButton")
+                    .remove("layout.refreshButton")
+                    .apply();
+                build();
+              }
+            })
+        .setNegativeButton("关闭", null)
+        .show();
+  }
+
+  @Override
+  public void onBackPressed() {
+    if (cleanupPage) {
+      cleanupPage = false;
+      render();
+    } else if (tab != 1) {
+      tab = 1;
+      render();
+    } else super.onBackPressed();
   }
 
   void chooseFolder() {

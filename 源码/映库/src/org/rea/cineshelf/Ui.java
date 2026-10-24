@@ -126,6 +126,12 @@ final class Ui {
       p.setStrokeJoin(Paint.Join.ROUND);
       p.setStyle(Paint.Style.STROKE);
       switch (kind) {
+        case "home":
+          c.drawRoundRect(3, 3, 10, 10, 2, 2, p);
+          c.drawRoundRect(14, 3, 21, 10, 2, 2, p);
+          c.drawRoundRect(3, 14, 10, 21, 2, 2, p);
+          c.drawRoundRect(14, 14, 21, 21, 2, 2, p);
+          break;
         case "library":
           c.drawRoundRect(3, 5, 21, 20, 3, 3, p);
           c.drawLine(7, 2, 17, 2, p);
