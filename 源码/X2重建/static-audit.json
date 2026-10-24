@@ -1,10 +1,36 @@
 {
   "input_sha256": "c0ebbc308918c3322f34842dcd197b80fead0a421ab139d87bd8d52b3dfea089",
-  "apk_sha256": "d440d172e023e82bb74102857d599896dfcfffa126779461d927422c755f1b73",
-  "original_libs_and_assets_identical": true,
+  "apk_sha256": "6b9584b1f04a30cd2bc8dc8fe059881e45cdaecd3be103a405d26a10826dc0df",
+  "assets_and_non_ad_native_bytes_identical": true,
+  "ad_presentation_patches": [
+    {
+      "abi": "arm64-v8a",
+      "name": "cached_advertisement_getter_to_existing_null_path",
+      "offset": 4697420,
+      "before": "e1d900a9",
+      "after": "5f000014"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "station_ad_future_to_existing_typed_empty_list",
+      "offset": 8421092,
+      "before": "e1000054",
+      "after": "1f2003d5"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "station_ad_controller_to_existing_empty_completion",
+      "offset": 8458184,
+      "before": "40030054",
+      "after": "1a000014"
+    }
+  ],
+  "ad_patch_abis": [
+    "arm64-v8a"
+  ],
   "legacy_offset_patch": false,
   "original_login_and_entitlement_native_code": "unchanged",
   "package": "com.example.yinqishe_shared",
-  "versionCode": 31,
+  "versionCode": 32,
   "read_only_java_capture": "BetterPlayer data source plus play/pause/dispose"
 }

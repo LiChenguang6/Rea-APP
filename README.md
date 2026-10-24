@@ -14,11 +14,15 @@ Android 8.0+，独立包名 `org.rea.cineshelf`，不申请联网权限。当前
 
 虚拟影库通过系统文件选择器和内容 URI 共享同一份真实文件。它不能透明替换任意旧 App 的原文件路径，也不保证阻止旧下载器再次下载。删除真实副本会使原路径失效；默认只合并显示，不删除视频。
 
-## X2社下载重建候选版
+## X2社下载重建版
 
-[下载 X2 重建 APK](https://github.com/LiChenguang6/Rea-APP/raw/refs/heads/main/%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%A4%B9/X2-download-refresh.apk) · [当前验证状态](下载文件夹/X2-重建候选说明.md)
+用户已确认 refresh1 在红米可以正常观看。本次 refresh2 针对 ARM64 的统一广告列表和独立站点广告入口修改，沿用包名与签名，可直接覆盖重建版安装。请保留现有数据。
 
-基于用户本次提供的正常原始底包，沿用共享下载版包名和签名。云端启动退出仍在排查，本候选尚未确认修复黑屏。请保留旧安装和现有视频。
+- [下载去广告更新版 refresh2](https://github.com/LiChenguang6/Rea-APP/raw/refs/heads/main/%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%A4%B9/X2-download-refresh2-noads.apk)
+- [修改与验证范围](下载文件夹/X2-去广告更新说明.md)
+- [此前可播放的 refresh1](下载文件夹/X2-download-refresh.apk)
+
+本地指令路径、构建和签名检查通过；去广告后的完整手机界面与真实源播放仍待实测，不承诺覆盖所有形式的广告。
 
 ## 历史共享下载候选版
 

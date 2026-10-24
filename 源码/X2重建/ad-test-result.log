@@ -1,0 +1,10 @@
+test_cached_ad_getter_returns_original_null_and_preserves_frame (__main__.AdPaths.test_cached_ad_getter_returns_original_null_and_preserves_frame) ... ok
+test_only_reviewed_instruction_bytes_change (__main__.AdPaths.test_only_reviewed_instruction_bytes_change) ... ok
+test_other_abis_stay_unchanged (__main__.AdPaths.test_other_abis_stay_unchanged) ... ok
+test_station_ads_always_use_existing_typed_empty_allocation (__main__.AdPaths.test_station_ads_always_use_existing_typed_empty_allocation) ... ok
+test_station_controller_skips_populating_ad_widgets (__main__.AdPaths.test_station_controller_skips_populating_ad_widgets) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.134s
+
+OK

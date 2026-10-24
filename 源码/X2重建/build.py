@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import subprocess,shutil,zipfile,hashlib,xml.etree.ElementTree as E,json,re
+from ad_patch import apply as apply_ad_patch
 R=Path(__file__).resolve().parent;T=Path('/workspace/android-tools');S=T/'sdk';BT=S/'android-15';B=R/'build';OUT=R/'output';INPUT=Path('/workspace/x2-analysis/updated-input/base.apk');DECODED=B/'decoded';A='{http://schemas.android.com/apk/res/android}'
 E.register_namespace('android',A[1:-1])
 def run(*args):subprocess.run(list(map(str,args)),check=True)
@@ -33,11 +34,15 @@ def main():
  node(app,'service',name='org.x2.export.DownloadService',exported='false',stopWithTask='false',foregroundServiceType='dataSync')
  node(app,'provider',name='org.x2.export.SharedDownloadGateway',authorities='com.example.yinqishe_shared.shared-download',exported='true',permission='org.x2.shared.permission.DOWNLOAD')
  tree.write(DECODED/'AndroidManifest.xml',encoding='utf-8',xml_declaration=True)
- p=DECODED/'apktool.yml';s=p.read_text();s=re.sub(r'(?m)^  versionCode:.*','  versionCode: 31',s);s=re.sub(r'(?m)^  versionName:.*','  versionName: 2.4.3-download-refresh1',s);p.write_text(s)
+ p=DECODED/'apktool.yml';s=p.read_text();s=re.sub(r'(?m)^  versionCode:.*','  versionCode: 32',s);s=re.sub(r'(?m)^  versionName:.*','  versionName: 2.4.3-download-refresh2-noads',s);p.write_text(s)
  main=DECODED/'smali_classes4/com/hr/xksilver/tq/MainActivity.smali';s=main.read_text();needle='    invoke-static {}, Lio/flutter/embedding/android/FlutterActivity;->convertUnit()V';assert s.count(needle)==1;s=s.replace(needle,needle+'\n\n    invoke-static {v0}, Lorg/x2/export/ExportEntry;->install(Landroid/app/Activity;)V');main.write_text(s)
  plugin=DECODED/'smali_classes4/com/sarthak/better_player_enhanced/BetterPlayerPlugin.smali';s=plugin.read_text();start=s.index('.method private final setDataSource(');end=s.index('.end method',start);block=s[start:end];needle='    move-object/from16 v3, p3';assert block.count(needle)>=1;block=block.replace(needle,needle+'\n\n    invoke-static {v3, v1}, Lorg/x2/export/PlayerCapture;->bind(Ljava/lang/Object;Ljava/util/Map;)V',1);plugin.write_text(s[:start]+block+s[end:])
  player=DECODED/'smali_classes4/com/sarthak/better_player_enhanced/BetterPlayer.smali'
  for method,hook in [('play','markPlaying'),('pause','markPaused'),('dispose','dispose')]:inject_at_start(player,'public final '+method+'()V','invoke-static/range {p0 .. p0}, Lorg/x2/export/PlayerCapture;->'+hook+'(Ljava/lang/Object;)V')
+ ad_changes=[]
+ for lib in (DECODED/'lib').glob('*/libapp.so'):
+  patched,changes=apply_ad_patch(lib.read_bytes(),lib.parent.name);lib.write_bytes(patched)
+  ad_changes.extend(dict(abi=lib.parent.name,**change) for change in changes)
  dex=compile_dex()
  # Add a new dex, without replacing any of the supplied player's dex files.
  existing=[int(m.group(1) or '1') for p in DECODED.glob('classes*.dex') if (m:=re.fullmatch(r'classes(\d*)\.dex',p.name))]
@@ -53,12 +58,15 @@ def main():
     p=DECODED/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(z.read(n))
  run('java','-jar',T/'apktool.jar','b','-p',T/'framework',DECODED,'-o',B/'unsigned.apk')
  run(BT/'zipalign','-f','-p','4',B/'unsigned.apk',B/'aligned.apk')
- key=Path('/workspace/shared-download-secrets');final=OUT/'X2-download-refresh.apk'
+ key=Path('/workspace/shared-download-secrets');final=OUT/'X2-download-refresh2-noads.apk'
  run('java','-jar',T/'root/usr/share/java/apksigner-35.0.2.jar','sign','--ks',key/'shared-download.p12','--ks-key-alias','shared-download','--ks-pass','file:'+str(key/'storepass'),'--v4-signing-enabled','false','--out',final,B/'aligned.apk')
  run('java','-jar',T/'root/usr/share/java/apksigner-35.0.2.jar','verify','--verbose',final)
  with zipfile.ZipFile(INPUT) as oldzip,zipfile.ZipFile(final) as newzip:
   names=[n for n in oldzip.namelist() if n.startswith(('lib/','assets/')) and not n.endswith('/')]
-  assert all(oldzip.read(n)==newzip.read(n) for n in names),'Supplied native library or asset changed'
- report={'input_sha256':hashlib.sha256(INPUT.read_bytes()).hexdigest(),'apk_sha256':hashlib.sha256(final.read_bytes()).hexdigest(),'original_libs_and_assets_identical':True,'legacy_offset_patch':False,'original_login_and_entitlement_native_code':'unchanged','package':'com.example.yinqishe_shared','versionCode':31,'read_only_java_capture':'BetterPlayer data source plus play/pause/dispose'}
+  for n in names:
+   expected=oldzip.read(n)
+   if n.endswith('/libapp.so'):expected,_=apply_ad_patch(expected,n.split('/')[1])
+   assert expected==newzip.read(n),'Unexpected native or asset change: '+n
+ report={'input_sha256':hashlib.sha256(INPUT.read_bytes()).hexdigest(),'apk_sha256':hashlib.sha256(final.read_bytes()).hexdigest(),'assets_and_non_ad_native_bytes_identical':True,'ad_presentation_patches':ad_changes,'ad_patch_abis':['arm64-v8a'],'legacy_offset_patch':False,'original_login_and_entitlement_native_code':'unchanged','package':'com.example.yinqishe_shared','versionCode':32,'read_only_java_capture':'BetterPlayer data source plus play/pause/dispose'}
  (OUT/'static-audit.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report),flush=True)
 if __name__=='__main__':main()
