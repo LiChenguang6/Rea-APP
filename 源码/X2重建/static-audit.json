@@ -1,6 +1,6 @@
 {
   "input_sha256": "c0ebbc308918c3322f34842dcd197b80fead0a421ab139d87bd8d52b3dfea089",
-  "apk_sha256": "6b9584b1f04a30cd2bc8dc8fe059881e45cdaecd3be103a405d26a10826dc0df",
+  "apk_sha256": "c3d0bfb80e73dc12b77608f4e3307c237c01d49d75bcfefd09a4989d7c19d360",
   "assets_and_non_ad_native_bytes_identical": true,
   "ad_presentation_patches": [
     {
@@ -23,6 +23,83 @@
       "offset": 8458184,
       "before": "40030054",
       "after": "1a000014"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "startup_queue_skip_open_screen_ad",
+      "offset": 8470104,
+      "before": "a0070054",
+      "after": "3d000014"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "startup_queue_skip_official_benefit_promotion",
+      "offset": 8470752,
+      "before": "e0050054",
+      "after": "2f000014"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "startup_queue_skip_ad_group",
+      "offset": 8470964,
+      "before": "61050034",
+      "after": "2b000014"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "startup_queue_skip_vertical_ad_group",
+      "offset": 8471160,
+      "before": "810c0034",
+      "after": "64000014"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "startup_queue_skip_gift_promotion",
+      "offset": 8471668,
+      "before": "60060054",
+      "after": "33000014"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "video_switch_call_original_post_ad_continuation",
+      "offset": 6585792,
+      "before": "07000094",
+      "after": "99370794"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "launch_timer_mark_skip_attempt_once",
+      "offset": 5904064,
+      "before": "61b74091",
+      "after": "1f7001f8"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "launch_timer_remove_unused_closure_load",
+      "offset": 5904068,
+      "before": "21e047f9",
+      "after": "1f2003d5"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "launch_timer_remove_unused_closure_allocation",
+      "offset": 5904072,
+      "before": "8a2d0a94",
+      "after": "1f2003d5"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "launch_timer_call_original_skip_action",
+      "offset": 5904084,
+      "before": "fbadfe97",
+      "after": "ee510994"
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "launch_skip_remove_only_ad_countdown_gate",
+      "offset": 8347324,
+      "before": "410600b5",
+      "after": "1f2003d5"
     }
   ],
   "ad_patch_abis": [
@@ -31,6 +108,6 @@
   "legacy_offset_patch": false,
   "original_login_and_entitlement_native_code": "unchanged",
   "package": "com.example.yinqishe_shared",
-  "versionCode": 32,
+  "versionCode": 33,
   "read_only_java_capture": "BetterPlayer data source plus play/pause/dispose"
 }

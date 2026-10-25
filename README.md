@@ -16,13 +16,13 @@ Android 8.0+，独立包名 `org.rea.cineshelf`，不申请联网权限。当前
 
 ## X2社下载重建版
 
-用户已确认 refresh1 在红米可以正常观看。本次 refresh2 针对 ARM64 的统一广告列表和独立站点广告入口修改，沿用包名与签名，可直接覆盖重建版安装。请保留现有数据。
+用户确认 refresh1 正常观看，refresh2 后仍有开屏5秒、金币及视频切换弹窗。最新 refresh3 继续修改独立推广窗口创建和原关闭后续播路径，保留登录、取源和观看权限检查。
 
-- [下载去广告更新版 refresh2](https://github.com/LiChenguang6/Rea-APP/raw/refs/heads/main/%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%A4%B9/X2-download-refresh2-noads.apk)
+- [下载 refresh3 弹窗修复测试版](https://github.com/LiChenguang6/Rea-APP/raw/refs/heads/main/%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%A4%B9/X2-download-refresh3-noads.apk)
 - [修改与验证范围](下载文件夹/X2-去广告更新说明.md)
-- [此前可播放的 refresh1](下载文件夹/X2-download-refresh.apk)
+- [历史 refresh2](下载文件夹/X2-download-refresh2-noads.apk) · [refresh1](下载文件夹/X2-download-refresh.apk)
 
-本地指令路径、构建和签名检查通过；去广告后的完整手机界面与真实源播放仍待实测，不承诺覆盖所有形式的广告。
+版本码33，沿用包名与签名，覆盖安装保留数据。仅 ARM64 广告修复。本地指令检查、构建和签名验证通过；完整手机界面与真实源播放仍待本轮实测。
 
 ## 历史共享下载候选版
 

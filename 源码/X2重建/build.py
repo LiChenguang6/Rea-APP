@@ -34,7 +34,7 @@ def main():
  node(app,'service',name='org.x2.export.DownloadService',exported='false',stopWithTask='false',foregroundServiceType='dataSync')
  node(app,'provider',name='org.x2.export.SharedDownloadGateway',authorities='com.example.yinqishe_shared.shared-download',exported='true',permission='org.x2.shared.permission.DOWNLOAD')
  tree.write(DECODED/'AndroidManifest.xml',encoding='utf-8',xml_declaration=True)
- p=DECODED/'apktool.yml';s=p.read_text();s=re.sub(r'(?m)^  versionCode:.*','  versionCode: 32',s);s=re.sub(r'(?m)^  versionName:.*','  versionName: 2.4.3-download-refresh2-noads',s);p.write_text(s)
+ p=DECODED/'apktool.yml';s=p.read_text();s=re.sub(r'(?m)^  versionCode:.*','  versionCode: 33',s);s=re.sub(r'(?m)^  versionName:.*','  versionName: 2.4.3-download-refresh3-noads',s);p.write_text(s)
  main=DECODED/'smali_classes4/com/hr/xksilver/tq/MainActivity.smali';s=main.read_text();needle='    invoke-static {}, Lio/flutter/embedding/android/FlutterActivity;->convertUnit()V';assert s.count(needle)==1;s=s.replace(needle,needle+'\n\n    invoke-static {v0}, Lorg/x2/export/ExportEntry;->install(Landroid/app/Activity;)V');main.write_text(s)
  plugin=DECODED/'smali_classes4/com/sarthak/better_player_enhanced/BetterPlayerPlugin.smali';s=plugin.read_text();start=s.index('.method private final setDataSource(');end=s.index('.end method',start);block=s[start:end];needle='    move-object/from16 v3, p3';assert block.count(needle)>=1;block=block.replace(needle,needle+'\n\n    invoke-static {v3, v1}, Lorg/x2/export/PlayerCapture;->bind(Ljava/lang/Object;Ljava/util/Map;)V',1);plugin.write_text(s[:start]+block+s[end:])
  player=DECODED/'smali_classes4/com/sarthak/better_player_enhanced/BetterPlayer.smali'
@@ -58,7 +58,7 @@ def main():
     p=DECODED/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(z.read(n))
  run('java','-jar',T/'apktool.jar','b','-p',T/'framework',DECODED,'-o',B/'unsigned.apk')
  run(BT/'zipalign','-f','-p','4',B/'unsigned.apk',B/'aligned.apk')
- key=Path('/workspace/shared-download-secrets');final=OUT/'X2-download-refresh2-noads.apk'
+ key=Path('/workspace/shared-download-secrets');final=OUT/'X2-download-refresh3-noads.apk'
  run('java','-jar',T/'root/usr/share/java/apksigner-35.0.2.jar','sign','--ks',key/'shared-download.p12','--ks-key-alias','shared-download','--ks-pass','file:'+str(key/'storepass'),'--v4-signing-enabled','false','--out',final,B/'aligned.apk')
  run('java','-jar',T/'root/usr/share/java/apksigner-35.0.2.jar','verify','--verbose',final)
  with zipfile.ZipFile(INPUT) as oldzip,zipfile.ZipFile(final) as newzip:
@@ -67,6 +67,6 @@ def main():
    expected=oldzip.read(n)
    if n.endswith('/libapp.so'):expected,_=apply_ad_patch(expected,n.split('/')[1])
    assert expected==newzip.read(n),'Unexpected native or asset change: '+n
- report={'input_sha256':hashlib.sha256(INPUT.read_bytes()).hexdigest(),'apk_sha256':hashlib.sha256(final.read_bytes()).hexdigest(),'assets_and_non_ad_native_bytes_identical':True,'ad_presentation_patches':ad_changes,'ad_patch_abis':['arm64-v8a'],'legacy_offset_patch':False,'original_login_and_entitlement_native_code':'unchanged','package':'com.example.yinqishe_shared','versionCode':32,'read_only_java_capture':'BetterPlayer data source plus play/pause/dispose'}
+ report={'input_sha256':hashlib.sha256(INPUT.read_bytes()).hexdigest(),'apk_sha256':hashlib.sha256(final.read_bytes()).hexdigest(),'assets_and_non_ad_native_bytes_identical':True,'ad_presentation_patches':ad_changes,'ad_patch_abis':['arm64-v8a'],'legacy_offset_patch':False,'original_login_and_entitlement_native_code':'unchanged','package':'com.example.yinqishe_shared','versionCode':33,'read_only_java_capture':'BetterPlayer data source plus play/pause/dispose'}
  (OUT/'static-audit.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report),flush=True)
 if __name__=='__main__':main()

@@ -1,7 +1,7 @@
 {
   "same_signer": true,
   "certificate_sha256": "e6ec068958affe92bcdb993ccb7c161cb6424b7a6ce51e30a4e7571fd656f843",
-  "all_six_dex_identical_to_refresh1": true,
-  "assets_identical_to_refresh1": true,
-  "versionCode": 32
+  "all_six_dex_identical_to_refresh2": true,
+  "assets_identical_to_refresh2": true,
+  "versionCode": 33
 }
