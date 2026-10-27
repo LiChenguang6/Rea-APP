@@ -26,6 +26,7 @@ def specs():
   ('launch_timer_remove_unused_closure_allocation',0x5a16c8,'8a2d0a94',bytes.fromhex('1f2003d5')),
   ('launch_timer_call_original_skip_action',0x5a16d4,'fbadfe97',branch(0x5a16d4,0x7f5e8c,True)),
   ('launch_skip_remove_only_ad_countdown_gate',0x7f5ebc,'410600b5',bytes.fromhex('1f2003d5')),
+  ('home_startup_select_video_tab',0x645f14,'22f87fd3',bytes.fromhex('420080d2')),
 
  ]
 def apply(data,abi):

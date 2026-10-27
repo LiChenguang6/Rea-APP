@@ -1,0 +1,9 @@
+{
+  "apk_sha256": "ded5d505c367b860493855f4021c1aaa98de3e38d746f500b4266f3119f55439",
+  "final_dex_has_no_startup_extra_loader_call": true,
+  "download_overlay_install_call_preserved": true,
+  "changed_classes4_smali": [
+    "com/hr/xksilver/tq/MainActivity.smali"
+  ],
+  "unchanged_classes4_smali": 8352
+}

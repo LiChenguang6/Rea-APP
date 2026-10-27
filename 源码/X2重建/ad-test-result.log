@@ -1,5 +1,6 @@
 test_cached_ad_getter_returns_original_null_and_preserves_frame (__main__.AdPaths.test_cached_ad_getter_returns_original_null_and_preserves_frame) ... ok
 test_countdown_bypass_keeps_initialization_failure_checks (__main__.AdPaths.test_countdown_bypass_keeps_initialization_failure_checks) ... ok
+test_home_startup_selects_video_for_all_previous_tab_values (__main__.AdPaths.test_home_startup_selects_video_for_all_previous_tab_values) ... ok
 test_launch_timer_invokes_original_skip_with_correct_state (__main__.AdPaths.test_launch_timer_invokes_original_skip_with_correct_state) ... ok
 test_only_reviewed_instruction_bytes_change (__main__.AdPaths.test_only_reviewed_instruction_bytes_change) ... ok
 test_other_abis_stay_unchanged (__main__.AdPaths.test_other_abis_stay_unchanged) ... ok
@@ -9,6 +10,6 @@ test_station_controller_skips_populating_ad_widgets (__main__.AdPaths.test_stati
 test_video_switch_preserves_receiver_and_runs_original_continuation (__main__.AdPaths.test_video_switch_preserves_receiver_and_runs_original_continuation) ... ok
 
 ----------------------------------------------------------------------
-Ran 9 tests in 0.816s
+Ran 10 tests in 0.593s
 
 OK

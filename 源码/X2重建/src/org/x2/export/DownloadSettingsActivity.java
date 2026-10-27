@@ -19,6 +19,7 @@ public final class DownloadSettingsActivity extends Activity {
     @Override public void onCreate(Bundle state){
         super.onCreate(state);PlaybackDiagnostics.start(this);setTitle("下载设置");
         LinearLayout root=new LinearLayout(this);root.setOrientation(1);int pad=(int)(16*getResources().getDisplayMetrics().density);root.setPadding(pad,pad,pad,pad);
+        TextView version=new TextView(this);version.setText("X2社·下载 · "+BuildIdentity.version(this));root.addView(version);
         folder=new TextView(this);root.addView(folder);
         Button choose=new Button(this);choose.setText("更改下载文件夹");root.addView(choose);
         choose.setOnClickListener(v->{Intent pick=new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);pick.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION|Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);try{startActivityForResult(pick,PICK);}catch(Exception e){error("无法打开系统文件夹选择窗口。");}});

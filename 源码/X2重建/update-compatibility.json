@@ -1,7 +1,13 @@
 {
   "same_signer": true,
   "certificate_sha256": "e6ec068958affe92bcdb993ccb7c161cb6424b7a6ce51e30a4e7571fd656f843",
-  "all_six_dex_identical_to_refresh2": true,
-  "assets_identical_to_refresh2": true,
-  "versionCode": 33
+  "apk_sha256": "ded5d505c367b860493855f4021c1aaa98de3e38d746f500b4266f3119f55439",
+  "changed_dex": [
+    "classes4.dex",
+    "classes6.dex"
+  ],
+  "unchanged_download_java_classes": 53,
+  "assets_identical_to_refresh3": true,
+  "versionCode": 34,
+  "default_video_tab_patch_abi": "arm64-v8a"
 }

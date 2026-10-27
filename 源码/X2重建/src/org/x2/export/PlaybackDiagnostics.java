@@ -6,5 +6,5 @@ final class PlaybackDiagnostics {
  static void start(Context c){}
  static void rememberSource(){try{last=new SourceSample(PlayerCapture.snapshot());}catch(Exception ignored){}}
  static SourceSample recentSource(){SourceSample s=last;return s!=null&&SystemClock.elapsedRealtime()-s.at<30000?s:null;}
- static String report(Context c){return "bridge=BetterPlayer-read-only\n"+PlayerCapture.playbackState()+"\nlegacy native patches=absent\naccount and video entitlements=unchanged\nNo URLs or credentials included.";}
+ static String report(Context c){return BuildIdentity.report(c)+"\nbridge=BetterPlayer-read-only\n"+PlayerCapture.playbackState()+"\nlegacy native patches=absent\naccount and video entitlements=unchanged\nNo URLs or credentials included.";}
 }

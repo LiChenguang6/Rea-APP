@@ -19,7 +19,7 @@ class AdPaths(unittest.TestCase):
  def test_only_reviewed_instruction_bytes_change(self):
   allowed={a+i for _,a,_,_ in specs() for i in range(4)}
   self.assertTrue(all(a==b or i in allowed for i,(a,b) in enumerate(zip(BASE,PATCHED))))
-  self.assertEqual(len(BASE),len(PATCHED));self.assertEqual(len(CHANGES),14)
+  self.assertEqual(len(BASE),len(PATCHED));self.assertEqual(len(CHANGES),15)
   with self.assertRaises(AssertionError):apply(PATCHED,'arm64-v8a')
  def test_cached_ad_getter_returns_original_null_and_preserves_frame(self):
   for null in [0x200001,0x100200001,0x7000200001]:
@@ -95,6 +95,15 @@ class AdPaths(unittest.TestCase):
   u.emu_start(0x7f5eb4,0x7f5ec0,count=10)
   self.assertEqual(u.reg_read(UC_ARM64_REG_PC),0x7f5ec0)
   self.assertEqual(BASE[0x7f5ec0:0x7f5f94],PATCHED[0x7f5ec0:0x7f5f94])
+
+ def test_home_startup_selects_video_for_all_previous_tab_values(self):
+  for previous in range(5):
+   u=vm(PATCHED);u.reg_write(UC_ARM64_REG_X29,STACK);u.mem_write(STACK-8,struct.pack('<Q',0x330001));u.reg_write(UC_ARM64_REG_X1,previous)
+   u.emu_start(0x645f10,0x4aaa80,count=12)
+   self.assertEqual(u.reg_read(UC_ARM64_REG_PC),0x4aaa80)
+   self.assertEqual(u.reg_read(UC_ARM64_REG_X2),2) # original video branch's Smi(1)
+   self.assertEqual(u.reg_read(UC_ARM64_REG_X1),0x330001)
+  self.assertEqual(BASE[0x4aaa80:0x4aac44],PATCHED[0x4aaa80:0x4aac44])
  def test_other_abis_stay_unchanged(self):
   self.assertEqual(apply(b'unchanged','x86_64'),(b'unchanged',[]))
 if __name__=='__main__':unittest.main(verbosity=2)

@@ -16,13 +16,13 @@ Android 8.0+，独立包名 `org.rea.cineshelf`，不申请联网权限。当前
 
 ## X2社下载重建版
 
-用户确认 refresh1 正常观看，refresh2 后仍有开屏5秒、金币及视频切换弹窗。最新 refresh3 继续修改独立推广窗口创建和原关闭后续播路径，保留登录、取源和观看权限检查。
+最新 refresh4 针对广告复发继续处理：取消额外远程/缓存DEX的启动入口，ARM64冷启动默认选择“视频”，后续手动导航保留。额外加载机制已确认，其与广告复发的因果关系未确认。
 
-- [下载 refresh3 弹窗修复测试版](https://github.com/LiChenguang6/Rea-APP/raw/refs/heads/main/%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%A4%B9/X2-download-refresh3-noads.apk)
-- [修改与验证范围](下载文件夹/X2-去广告更新说明.md)
-- [历史 refresh2](下载文件夹/X2-download-refresh2-noads.apk) · [refresh1](下载文件夹/X2-download-refresh.apk)
+- [下载 refresh4 测试版](https://github.com/LiChenguang6/Rea-APP/raw/refs/heads/main/%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%A4%B9/X2-download-refresh4-noads.apk)
+- [更新和验证范围](下载文件夹/X2-去广告更新说明.md)
+- [历史 refresh3](下载文件夹/X2-download-refresh3-noads.apk)
 
-版本码33，沿用包名与签名，覆盖安装保留数据。仅 ARM64 广告修复。本地指令检查、构建和签名验证通过；完整手机界面与真实源播放仍待本轮实测。
+版本码34，同包名、同签名，可直接覆盖重建版安装；不要卸载或清除数据。下载设置首行可核对refresh4 (34)。本地检查通过，广告效果和真实观看待手机复测。
 
 ## 历史共享下载候选版
 
